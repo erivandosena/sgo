@@ -1,0 +1,381 @@
+object FrmCaixaSaidaB: TFrmCaixaSaidaB
+  Left = 355
+  Top = 151
+  Align = alTop
+  BorderIcons = []
+  BorderStyle = bsDialog
+  Caption = 'Saida'
+  ClientHeight = 513
+  ClientWidth = 792
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDefault
+  OnCloseQuery = FormCloseQuery
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Label72: TLabel
+    Left = 16
+    Top = 219
+    Width = 294
+    Height = 20
+    Caption = 'Extrato dos Lan'#231'amentos de D'#233'bito:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object Label43: TLabel
+    Left = 510
+    Top = 4
+    Width = 197
+    Height = 33
+    Caption = 'Documento N'#186':'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -29
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Label39: TLabel
+    Left = 16
+    Top = 4
+    Width = 153
+    Height = 33
+    Caption = 'Data Sa'#237'da:'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -29
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Label31: TLabel
+    Left = 16
+    Top = 81
+    Width = 261
+    Height = 33
+    Caption = 'Descri'#231#227'o da Saida:'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -29
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Label30: TLabel
+    Left = 247
+    Top = 4
+    Width = 151
+    Height = 33
+    Caption = 'Valor Pago:'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -29
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Bevel4: TBevel
+    Left = 16
+    Top = 160
+    Width = 761
+    Height = 49
+  end
+  object MEdit_ValorPago: TMaskEdit
+    Left = 247
+    Top = 39
+    Width = 185
+    Height = 38
+    BevelInner = bvLowered
+    BevelOuter = bvRaised
+    BevelKind = bkTile
+    BorderStyle = bsNone
+    CharCase = ecUpperCase
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -29
+    Font.Name = 'Arial'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 1
+    OnKeyPress = MEdit_ValorPagoKeyPress
+  end
+  object MEdit_NumeroDoc: TMaskEdit
+    Left = 510
+    Top = 39
+    Width = 265
+    Height = 38
+    BevelInner = bvLowered
+    BevelOuter = bvRaised
+    BevelKind = bkTile
+    BorderStyle = bsNone
+    CharCase = ecUpperCase
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -29
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    MaxLength = 16
+    ParentFont = False
+    TabOrder = 2
+    OnKeyPress = MEdit_NumeroDocKeyPress
+  end
+  object MEdit_Descricao: TMaskEdit
+    Left = 16
+    Top = 116
+    Width = 761
+    Height = 37
+    BevelInner = bvLowered
+    BevelOuter = bvRaised
+    BevelKind = bkTile
+    BorderStyle = bsNone
+    CharCase = ecUpperCase
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -32
+    Font.Name = 'Arial'
+    Font.Style = []
+    MaxLength = 35
+    ParentFont = False
+    TabOrder = 3
+    OnKeyPress = MEdit_DescricaoKeyPress
+  end
+  object MEdit_DataSaida: TMaskEdit
+    Left = 16
+    Top = 39
+    Width = 153
+    Height = 38
+    BevelInner = bvLowered
+    BevelOuter = bvRaised
+    BevelKind = bkTile
+    BorderStyle = bsNone
+    CharCase = ecUpperCase
+    EditMask = '99/99/9999;1;_'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -29
+    Font.Name = 'Arial'
+    Font.Style = []
+    MaxLength = 10
+    ParentFont = False
+    TabOrder = 0
+    Text = '  /  /    '
+    OnKeyPress = MEdit_DataSaidaKeyPress
+  end
+  object ListBox_ExtSai: TListBox
+    Left = 16
+    Top = 240
+    Width = 761
+    Height = 246
+    Columns = 1
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Fixedsys'
+    Font.Style = []
+    ItemHeight = 15
+    ParentFont = False
+    TabOrder = 9
+  end
+  object Btn_ProximoDebito: TBitBtn
+    Left = 24
+    Top = 168
+    Width = 130
+    Height = 33
+    Cursor = crHandPoint
+    Caption = '&Pr'#243'ximo'
+    Enabled = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 4
+    OnClick = Btn_ProximoDebitoClick
+  end
+  object Btn_EstornoSaida: TBitBtn
+    Left = 472
+    Top = 168
+    Width = 130
+    Height = 33
+    Cursor = crHandPoint
+    Caption = '&Estornar'
+    Enabled = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 7
+    OnClick = Btn_EstornoSaidaClick
+  end
+  object Btn_ConfirmaDebito: TBitBtn
+    Left = 640
+    Top = 168
+    Width = 130
+    Height = 33
+    Cursor = crHandPoint
+    Caption = 'Confirmar &D'#233'bito'
+    Enabled = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 8
+    OnClick = Btn_ConfirmaDebitoClick
+  end
+  object Btn_CancelaSaida: TBitBtn
+    Left = 336
+    Top = 168
+    Width = 130
+    Height = 33
+    Cursor = crHandPoint
+    Caption = '&Finalizar'
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 6
+    OnClick = Btn_CancelaSaidaClick
+  end
+  object Btn_CancelarSaida: TBitBtn
+    Left = 200
+    Top = 168
+    Width = 130
+    Height = 33
+    Cursor = crHandPoint
+    Caption = '&Cancelar'
+    Enabled = False
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 5
+    OnClick = Btn_CancelarSaidaClick
+  end
+  object Panel_EstornoSai: TPanel
+    Left = 16
+    Top = 222
+    Width = 761
+    Height = 273
+    TabOrder = 10
+    Visible = False
+    object Label71: TLabel
+      Left = 12
+      Top = 8
+      Width = 107
+      Height = 16
+      Caption = 'Lan'#231'amento(s):'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object Btn_ExeEstSai: TBitBtn
+      Left = 208
+      Top = 232
+      Width = 161
+      Height = 33
+      Cursor = crHandPoint
+      Caption = 'E&xecutar Estorno'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 1
+      OnClick = Btn_ExeEstSaiClick
+    end
+    object Btn_SairEstSai: TBitBtn
+      Left = 384
+      Top = 232
+      Width = 161
+      Height = 33
+      Cursor = crHandPoint
+      Caption = '&Sair'
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'MS Sans Serif'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 2
+      OnClick = Btn_SairEstSaiClick
+    end
+    object DBGrid_LancSai: TDBGrid
+      Left = 12
+      Top = 25
+      Width = 737
+      Height = 200
+      DataSource = DmFluxo.DS_EstornoSaida
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Courier'
+      Font.Style = []
+      Options = [dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgRowSelect]
+      ParentFont = False
+      TabOrder = 0
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -11
+      TitleFont.Name = 'MS Sans Serif'
+      TitleFont.Style = []
+      OnKeyPress = DBGrid_LancSaiKeyPress
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'DATA'
+          Title.Font.Charset = DEFAULT_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -11
+          Title.Font.Name = 'MS Sans Serif'
+          Title.Font.Style = [fsBold]
+          Width = 102
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'HISTORICO'
+          Title.Caption = 'Hist'#243'rico'
+          Title.Font.Charset = DEFAULT_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -11
+          Title.Font.Name = 'MS Sans Serif'
+          Title.Font.Style = [fsBold]
+          Width = 493
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'VALOR'
+          Title.Font.Charset = DEFAULT_CHARSET
+          Title.Font.Color = clWindowText
+          Title.Font.Height = -11
+          Title.Font.Name = 'MS Sans Serif'
+          Title.Font.Style = [fsBold]
+          Width = 102
+          Visible = True
+        end>
+    end
+  end
+end

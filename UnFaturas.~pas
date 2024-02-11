@@ -1,0 +1,418 @@
+unit UnFaturas;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, DB, IBCustomDataSet, IBQuery, StdCtrls, Buttons, Grids, DBGrids;
+
+type
+  TFrmFaturas = class(TForm)
+    IBQuery_Faturas: TIBQuery;
+    Ds_Faturas: TDataSource;
+    DBGrid_Parcelas: TDBGrid;
+    CBox_Fatura: TComboBox;
+    CBox_Contrato: TComboBox;
+    CBox_Cliente: TComboBox;
+    BtnFechar: TBitBtn;
+    IBQuery_Vendas: TIBQuery;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Btn_ImprimeCarta: TBitBtn;
+    DS_CliPendente: TDataSource;
+    IBQuery_CliPendente: TIBQuery;
+    IBQuery_VendasNUMERO_CONTRATO: TIBStringField;
+    IBQuery_VendasNOME_CLIENTE: TIBStringField;
+    IBQuery_CliPendenteBAIRRO: TIBStringField;
+    IBQuery_CliPendenteCEP: TIBStringField;
+    IBQuery_CliPendenteCIDADE: TIBStringField;
+    IBQuery_CliPendenteCNPJ: TIBStringField;
+    IBQuery_CliPendenteEMAIL: TIBStringField;
+    IBQuery_CliPendenteENDERECO: TIBStringField;
+    IBQuery_CliPendenteESTADO_UF: TIBStringField;
+    IBQuery_CliPendenteIE: TIBStringField;
+    IBQuery_CliPendenteTELEFONE: TIBStringField;
+    IBQuery_CliPendenteNUMERO_CONTRATO: TIBStringField;
+    IBQuery_CliPendenteNOME_CLIENTE: TIBStringField;
+    procedure FormShow(Sender: TObject);
+    procedure CBox_ClienteKeyPress(Sender: TObject; var Key: Char);
+    procedure BtnFecharClick(Sender: TObject);
+    procedure CBox_ContratoKeyPress(Sender: TObject; var Key: Char);
+    procedure CBox_FaturaKeyPress(Sender: TObject; var Key: Char);
+    procedure DBGrid_ParcelasKeyPress(Sender: TObject; var Key: Char);
+    procedure FormCreate(Sender: TObject);
+    procedure Btn_ImprimeCartaClick(Sender: TObject);
+    procedure DBGrid_ParcelasKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmFaturas: TFrmFaturas;
+
+implementation
+
+uses UnDm, UnRelCartCob, UnPrincipal;
+
+{$R *.dfm}
+
+procedure TFrmFaturas.FormShow(Sender: TObject);
+begin
+FrmFaturas.Top:=97;
+FrmFaturas.Left:=0;
+if Dm.IBDS_EMPRESANOME_EMPRESARIAL.AsString = '' then
+begin
+FrmFaturas.Caption:= FrmFaturas.Caption;
+Exit;
+end else
+FrmFaturas.Caption:= FrmFaturas.Caption+' - '+Dm.IBDS_EMPRESANOME_FANTASIA.AsString;
+Screen.Cursor := crHourGlass;
+// SELECIONA AS VENDAS A PRAZO
+IBQuery_Vendas.Close;
+IBQuery_Vendas.SQL.Clear;
+IBQuery_Vendas.SQL.Add('select NUMERO_CONTRATO, NOME_CLIENTE from VENDAS ');
+IBQuery_Vendas.SQL.Add('where TIPO_VENDA = :TVenda ');
+IBQuery_Vendas.SQL.Add('order by NUMERO_CONTRATO');
+IBQuery_Vendas.ParamByName('TVenda').AsString := 'A PRAZO';
+IBQuery_Vendas.Prepare;
+IBQuery_Vendas.Open;
+//  ADICIONA NUMERO CONTRATO
+    CBox_Contrato.Items.Clear;
+    IBQuery_Vendas.First;
+    if not IBQuery_Vendas.Eof then
+    repeat
+    { seus comandos para a tabela }
+    CBox_Contrato.Items.Add(IBQuery_VendasNUMERO_CONTRATO.AsString);
+    IBQuery_Vendas.Next;
+    until IBQuery_Vendas.Eof;
+//  ADICIONA CLIENTES
+    CBox_Cliente.Items.Clear;
+    IBQuery_Vendas.First;
+    if not IBQuery_Vendas.Eof then
+    repeat
+    { seus comandos para a tabela }
+    CBox_Cliente.Items.Add(IBQuery_VendasNOME_CLIENTE.AsString);
+    IBQuery_Vendas.Next;
+    until IBQuery_Vendas.Eof;
+Screen.Cursor := crDefault;
+end;
+
+procedure TFrmFaturas.CBox_ClienteKeyPress(Sender: TObject; var Key: Char);
+begin
+If not( key in['A'..'Z',#8,#13] ) then
+begin
+Abort;
+end;
+if Key = #13 then
+  begin
+  Key := #0;{ Suprime o som }
+  { escreva aqui os seus comandos }
+if CBox_Contrato.Text = '' then
+begin
+CBox_Fatura.SetFocus;
+Exit;
+end else
+IBQuery_CliPendente.Close;
+IBQuery_CliPendente.SQL.Clear;
+IBQuery_CliPendente.SQL.Add('select BAIRRO, CEP, CIDADE, CNPJ, EMAIL, ENDERECO, ESTADO_UF, IE, TELEFONE, NUMERO_CONTRATO, NOME_CLIENTE from EMPRESA,VENDAS ');
+IBQuery_CliPendente.SQL.Add('where NUMERO_CONTRATO = :NC and NOME_CLIENTE = :Cliente ');
+IBQuery_CliPendente.SQL.Add('order by NUMERO_CONTRATO');
+IBQuery_CliPendente.ParamByName('NC').AsString := CBox_Contrato.Text;
+IBQuery_CliPendente.ParamByName('Cliente').AsString := CBox_Cliente.Text;
+IBQuery_CliPendente.Prepare;
+IBQuery_CliPendente.Open;
+if CBox_Fatura.Text = 'CARNÊ' then
+begin
+Screen.Cursor := crHourGlass;
+// SELECIONA AS PARCELAS GERADAS DO CARNÊ
+IBQuery_Faturas.Close;
+IBQuery_Faturas.SQL.Clear;
+IBQuery_Faturas.SQL.Add('select * from CARNE');
+IBQuery_Faturas.SQL.Add('where NUMERO_CONTRATO = :NC and NOME_CLIENTE = :Cliente ');
+IBQuery_Faturas.SQL.Add('order by DATA_VENCIMENTO');
+IBQuery_Faturas.ParamByName('NC').AsString := CBox_Contrato.Text;
+IBQuery_Faturas.ParamByName('Cliente').AsString := CBox_Cliente.Text;
+IBQuery_Faturas.Prepare;
+IBQuery_Faturas.Open;
+Screen.Cursor := crDefault;
+DBGrid_Parcelas.SetFocus;
+Exit;
+end else
+if CBox_Fatura.Text = 'BOLETO' then
+begin
+Screen.Cursor := crHourGlass;
+// SELECIONA AS PARCELAS GERADAS DO BOLETO
+IBQuery_Faturas.Close;
+IBQuery_Faturas.SQL.Clear;
+IBQuery_Faturas.SQL.Add('select * from BOLETO');
+IBQuery_Faturas.SQL.Add('where NUMERO_CONTRATO = :NC and NOME_CLIENTE = :Cliente ');
+IBQuery_Faturas.SQL.Add('order by DATA_VENCIMENTO');
+IBQuery_Faturas.ParamByName('NC').AsString := CBox_Contrato.Text;
+IBQuery_Faturas.ParamByName('Cliente').AsString := CBox_Cliente.Text;
+IBQuery_Faturas.Prepare;
+IBQuery_Faturas.Open;
+Screen.Cursor := crDefault;
+DBGrid_Parcelas.SetFocus;
+Exit;
+end else
+if CBox_Fatura.Text = 'CHEQUE' then
+begin
+Screen.Cursor := crHourGlass;
+// SELECIONA AS PARCELAS GERADAS DO CHEQUE
+IBQuery_Faturas.Close;
+IBQuery_Faturas.SQL.Clear;
+IBQuery_Faturas.SQL.Add('select * from CHEQUE');
+IBQuery_Faturas.SQL.Add('where NUMERO_CONTRATO = :NC and NOME_CLIENTE = :Cliente ');
+IBQuery_Faturas.SQL.Add('order by DATA_VENCIMENTO');
+IBQuery_Faturas.ParamByName('NC').AsString := CBox_Contrato.Text;
+IBQuery_Faturas.ParamByName('Cliente').AsString := CBox_Cliente.Text;
+IBQuery_Faturas.Prepare;
+IBQuery_Faturas.Open;
+Screen.Cursor := crDefault;
+DBGrid_Parcelas.SetFocus;
+Exit;
+end else
+if CBox_Fatura.Text = 'CARTÃO' then
+begin
+Screen.Cursor := crHourGlass;
+// SELECIONA AS PARCELAS GERADAS DO CARTÃO
+IBQuery_Faturas.Close;
+IBQuery_Faturas.SQL.Clear;
+IBQuery_Faturas.SQL.Add('select * from CARTAO');
+IBQuery_Faturas.SQL.Add('where NUMERO_CONTRATO = :NC and NOME_CLIENTE = :Cliente ');
+IBQuery_Faturas.SQL.Add('order by DATA_VENCIMENTO');
+IBQuery_Faturas.ParamByName('NC').AsString := CBox_Contrato.Text;
+IBQuery_Faturas.ParamByName('Cliente').AsString := CBox_Cliente.Text;
+IBQuery_Faturas.Prepare;
+IBQuery_Faturas.Open;
+Screen.Cursor := crDefault;
+DBGrid_Parcelas.SetFocus;
+end;
+end;
+end;
+
+procedure TFrmFaturas.BtnFecharClick(Sender: TObject);
+begin
+Close;
+end;
+
+procedure TFrmFaturas.CBox_ContratoKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+If not( key in['0'..'9',#8,#13] ) then
+begin
+Abort;
+end;
+if Key = #13 then
+  begin
+  Key := #0;{ Suprime o som }
+  { escreva aqui os seus comandos }
+IBQuery_Vendas.Locate('NUMERO_CONTRATO', CBox_Contrato.Text, []);
+CBox_Cliente.Text:= IBQuery_VendasNOME_CLIENTE.AsString;
+CBox_Cliente.SetFocus;
+end;
+end;
+
+procedure TFrmFaturas.CBox_FaturaKeyPress(Sender: TObject; var Key: Char);
+begin
+If not( key in['A'..'Z',#8,#13] ) then
+begin
+Abort;
+end;
+if Key = #13 then
+  begin
+  Key := #0;{ Suprime o som }
+  { escreva aqui os seus comandos }
+if CBox_Fatura.Text = 'CARNÊ' then
+begin
+Screen.Cursor := crHourGlass;
+// SELECIONA AS VENDAS A PRAZO
+IBQuery_Vendas.Close;
+IBQuery_Vendas.SQL.Clear;
+IBQuery_Vendas.SQL.Add('select NUMERO_CONTRATO, NOME_CLIENTE from VENDAS ');
+IBQuery_Vendas.SQL.Add('where TIPO_VENDA = :TVenda and FORMA_VENDA = :FVenda ');
+IBQuery_Vendas.SQL.Add('order by NUMERO_CONTRATO');
+IBQuery_Vendas.ParamByName('TVenda').AsString := 'A PRAZO';
+IBQuery_Vendas.ParamByName('FVenda').AsString := 'CARNÊ';
+IBQuery_Vendas.Prepare;
+IBQuery_Vendas.Open;
+//  ADICIONA NUMERO CONTRATO
+    CBox_Contrato.Items.Clear;
+    IBQuery_Vendas.First;
+    if not IBQuery_Vendas.Eof then
+    repeat
+    { seus comandos para a tabela }
+    CBox_Contrato.Items.Add(IBQuery_VendasNUMERO_CONTRATO.AsString);
+    IBQuery_Vendas.Next;
+    until IBQuery_Vendas.Eof;
+//  ADICIONA CLIENTES
+    CBox_Cliente.Items.Clear;
+    IBQuery_Vendas.First;
+    if not IBQuery_Vendas.Eof then
+    repeat
+    { seus comandos para a tabela }
+    CBox_Cliente.Items.Add(IBQuery_VendasNOME_CLIENTE.AsString);
+    IBQuery_Vendas.Next;
+    until IBQuery_Vendas.Eof;
+    CBox_Contrato.ItemIndex:= 0;
+CBox_Contrato.SetFocus;
+Screen.Cursor := crDefault;
+Exit;
+end else
+if CBox_Fatura.Text = 'BOLETO' then
+begin
+Screen.Cursor := crHourGlass;
+// SELECIONA AS VENDAS A PRAZO
+IBQuery_Vendas.Close;
+IBQuery_Vendas.SQL.Clear;
+IBQuery_Vendas.SQL.Add('select NUMERO_CONTRATO, NOME_CLIENTE from VENDAS ');
+IBQuery_Vendas.SQL.Add('where TIPO_VENDA = :TVenda and FORMA_VENDA = :FVenda ');
+IBQuery_Vendas.SQL.Add('order by NUMERO_CONTRATO');
+IBQuery_Vendas.ParamByName('TVenda').AsString := 'A PRAZO';
+IBQuery_Vendas.ParamByName('FVenda').AsString := 'BOLETO BANCÁRIO';
+IBQuery_Vendas.Prepare;
+IBQuery_Vendas.Open;
+//  ADICIONA NUMERO CONTRATO
+    CBox_Contrato.Items.Clear;
+    IBQuery_Vendas.First;
+    if not IBQuery_Vendas.Eof then
+    repeat
+    { seus comandos para a tabela }
+    CBox_Contrato.Items.Add(IBQuery_VendasNUMERO_CONTRATO.AsString);
+    IBQuery_Vendas.Next;
+    until IBQuery_Vendas.Eof;
+//  ADICIONA CLIENTES
+    CBox_Cliente.Items.Clear;
+    IBQuery_Vendas.First;
+    if not IBQuery_Vendas.Eof then
+    repeat
+    { seus comandos para a tabela }
+    CBox_Cliente.Items.Add(IBQuery_VendasNOME_CLIENTE.AsString);
+    IBQuery_Vendas.Next;
+    until IBQuery_Vendas.Eof;
+CBox_Contrato.ItemIndex:= 0;
+CBox_Contrato.SetFocus;
+Screen.Cursor := crDefault;
+Exit;
+end else
+if CBox_Fatura.Text = 'CHEQUE' then
+begin
+Screen.Cursor := crHourGlass;
+// SELECIONA AS VENDAS A PRAZO
+IBQuery_Vendas.Close;
+IBQuery_Vendas.SQL.Clear;
+IBQuery_Vendas.SQL.Add('select NUMERO_CONTRATO, NOME_CLIENTE from VENDAS ');
+IBQuery_Vendas.SQL.Add('where TIPO_VENDA = :TVenda and FORMA_VENDA = :FVenda ');
+IBQuery_Vendas.SQL.Add('order by NUMERO_CONTRATO');
+IBQuery_Vendas.ParamByName('TVenda').AsString := 'A PRAZO';
+IBQuery_Vendas.ParamByName('FVenda').AsString := 'CHEQUE';
+IBQuery_Vendas.Prepare;
+IBQuery_Vendas.Open;
+//  ADICIONA NUMERO CONTRATO
+    CBox_Contrato.Items.Clear;
+    IBQuery_Vendas.First;
+    if not IBQuery_Vendas.Eof then
+    repeat
+    { seus comandos para a tabela }
+    CBox_Contrato.Items.Add(IBQuery_VendasNUMERO_CONTRATO.AsString);
+    IBQuery_Vendas.Next;
+    until IBQuery_Vendas.Eof;
+//  ADICIONA CLIENTES
+    CBox_Cliente.Items.Clear;
+    IBQuery_Vendas.First;
+    if not IBQuery_Vendas.Eof then
+    repeat
+    { seus comandos para a tabela }
+    CBox_Cliente.Items.Add(IBQuery_VendasNOME_CLIENTE.AsString);
+    IBQuery_Vendas.Next;
+    until IBQuery_Vendas.Eof;
+CBox_Contrato.ItemIndex:= 0;
+CBox_Contrato.SetFocus;
+Screen.Cursor := crDefault;
+Exit;
+end else
+if CBox_Fatura.Text = 'CARTÃO' then
+begin
+Screen.Cursor := crHourGlass;
+// SELECIONA AS VENDAS A PRAZO
+IBQuery_Vendas.Close;
+IBQuery_Vendas.SQL.Clear;
+IBQuery_Vendas.SQL.Add('select NUMERO_CONTRATO, NOME_CLIENTE from VENDAS ');
+IBQuery_Vendas.SQL.Add('where TIPO_VENDA = :TVenda and FORMA_VENDA = :FVenda ');
+IBQuery_Vendas.SQL.Add('order by NUMERO_CONTRATO');
+IBQuery_Vendas.ParamByName('TVenda').AsString := 'A PRAZO';
+IBQuery_Vendas.ParamByName('FVenda').AsString := 'CARTÃO';
+IBQuery_Vendas.Prepare;
+IBQuery_Vendas.Open;
+//  ADICIONA NUMERO CONTRATO
+    CBox_Contrato.Items.Clear;
+    IBQuery_Vendas.First;
+    if not IBQuery_Vendas.Eof then
+    repeat
+    { seus comandos para a tabela }
+    CBox_Contrato.Items.Add(IBQuery_VendasNUMERO_CONTRATO.AsString);
+    IBQuery_Vendas.Next;
+    until IBQuery_Vendas.Eof;
+//  ADICIONA CLIENTES
+    CBox_Cliente.Items.Clear;
+    IBQuery_Vendas.First;
+    if not IBQuery_Vendas.Eof then
+    repeat
+    { seus comandos para a tabela }
+    CBox_Cliente.Items.Add(IBQuery_VendasNOME_CLIENTE.AsString);
+    IBQuery_Vendas.Next;
+    until IBQuery_Vendas.Eof;
+CBox_Contrato.ItemIndex:= 0;
+CBox_Contrato.SetFocus;
+Screen.Cursor := crDefault;
+end;
+end;
+end;
+
+procedure TFrmFaturas.DBGrid_ParcelasKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+if Key = #13 then
+  begin
+  Key := #0;{ Suprime o som }
+  { escreva aqui os seus comandos }
+Btn_ImprimeCarta.SetFocus;
+end;
+end;
+
+procedure TFrmFaturas.FormCreate(Sender: TObject);
+begin
+Shortdateformat:='dd/mm/yyyy';
+end;
+
+procedure TFrmFaturas.Btn_ImprimeCartaClick(Sender: TObject);
+begin
+if FrmRelCartCob <> Nil then Exit;
+FrmRelCartCob := TFrmRelCartCob.Create(self);
+FrmRelCartCob.QuickRep1.OnPreview := FrmPrincipal.CustomPreview;
+FrmRelCartCob.QuickRep1.Preview;
+FrmRelCartCob.Free;
+FrmRelCartCob := Nil;
+end;
+
+procedure TFrmFaturas.DBGrid_ParcelasKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+if DBGrid_Parcelas.Fields[1].Text = '' then
+begin
+CBox_Cliente.SetFocus;
+Exit;
+end else
+if DBGrid_Parcelas.Fields[1].AsDateTime < Date then
+begin
+Btn_ImprimeCarta.Enabled:= True;
+Exit;
+end else
+Btn_ImprimeCarta.Enabled:= False;
+end;
+
+end.

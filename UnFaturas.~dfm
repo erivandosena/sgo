@@ -1,0 +1,351 @@
+object FrmFaturas: TFrmFaturas
+  Left = 197
+  Top = 111
+  BorderIcons = []
+  BorderStyle = bsSingle
+  Caption = 'Faturas'
+  ClientHeight = 296
+  ClientWidth = 792
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDefault
+  OnCreate = FormCreate
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Label1: TLabel
+    Left = 8
+    Top = 8
+    Width = 66
+    Height = 24
+    Caption = 'Fatura:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -19
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object Label2: TLabel
+    Left = 120
+    Top = 8
+    Width = 85
+    Height = 24
+    Caption = 'Contrato:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -19
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object Label3: TLabel
+    Left = 264
+    Top = 8
+    Width = 72
+    Height = 24
+    Caption = 'Cliente:'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -19
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
+  object DBGrid_Parcelas: TDBGrid
+    Left = 8
+    Top = 75
+    Width = 777
+    Height = 177
+    BorderStyle = bsNone
+    DataSource = Ds_Faturas
+    FixedColor = clMoneyGreen
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    Options = [dgTitles, dgColLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+    ParentFont = False
+    TabOrder = 3
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Style = [fsBold]
+    OnKeyDown = DBGrid_ParcelasKeyDown
+    OnKeyPress = DBGrid_ParcelasKeyPress
+    OnKeyUp = DBGrid_ParcelasKeyDown
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'NUMERO_PARCELA'
+        Title.Alignment = taCenter
+        Title.Caption = 'Parcela'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'DATA_VENCIMENTO'
+        Title.Alignment = taCenter
+        Title.Caption = 'Data de Vencimento'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'VALOR_PARCELA'
+        Title.Alignment = taRightJustify
+        Title.Caption = 'Valor da Parcela'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'SITUACAO_PARCELA'
+        Title.Alignment = taCenter
+        Title.Caption = 'Situa'#231#227'o Atual'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NUMERO_CONTRATO'
+        Title.Alignment = taCenter
+        Title.Caption = 'N'#186' Contrato'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'NUMERO_DOC'
+        Title.Alignment = taCenter
+        Title.Caption = 'N'#250'mero do Documento'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'DATA_PAGAMENTO'
+        Title.Alignment = taCenter
+        Title.Caption = 'Data Pagamento'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'VALOR_PAGO'
+        Title.Alignment = taRightJustify
+        Title.Caption = #218'ltimo Valor Pago'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'VALOR_PENDENTE'
+        Title.Alignment = taRightJustify
+        Title.Caption = 'Valor Restante'
+        Visible = True
+      end>
+  end
+  object CBox_Fatura: TComboBox
+    Left = 8
+    Top = 32
+    Width = 105
+    Height = 30
+    BevelInner = bvLowered
+    BevelKind = bkTile
+    BevelOuter = bvRaised
+    CharCase = ecUpperCase
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -19
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ItemHeight = 22
+    ParentFont = False
+    TabOrder = 0
+    OnKeyPress = CBox_FaturaKeyPress
+    Items.Strings = (
+      'CARN'#202
+      'BOLETO'
+      'CHEQUE'
+      'CART'#195'O')
+  end
+  object CBox_Contrato: TComboBox
+    Left = 120
+    Top = 32
+    Width = 135
+    Height = 30
+    BevelInner = bvLowered
+    BevelKind = bkTile
+    BevelOuter = bvRaised
+    CharCase = ecUpperCase
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -19
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ItemHeight = 22
+    ParentFont = False
+    TabOrder = 1
+    OnKeyPress = CBox_ContratoKeyPress
+  end
+  object CBox_Cliente: TComboBox
+    Left = 264
+    Top = 32
+    Width = 521
+    Height = 30
+    BevelInner = bvLowered
+    BevelKind = bkTile
+    BevelOuter = bvRaised
+    CharCase = ecUpperCase
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -19
+    Font.Name = 'Arial'
+    Font.Style = [fsBold]
+    ItemHeight = 22
+    ParentFont = False
+    TabOrder = 2
+    OnKeyPress = CBox_ClienteKeyPress
+  end
+  object BtnFechar: TBitBtn
+    Left = 408
+    Top = 264
+    Width = 75
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Fechar'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 4
+    OnClick = BtnFecharClick
+  end
+  object Btn_ImprimeCarta: TBitBtn
+    Left = 264
+    Top = 264
+    Width = 131
+    Height = 25
+    Cursor = crHandPoint
+    Caption = 'Imprimir Carta'
+    Enabled = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 5
+    OnClick = Btn_ImprimeCartaClick
+  end
+  object IBQuery_Faturas: TIBQuery
+    Database = Dm.IBDatabase
+    Transaction = Dm.IBTransaction
+    SQL.Strings = (
+      'select * from CARNE')
+    Left = 184
+    Top = 136
+  end
+  object Ds_Faturas: TDataSource
+    DataSet = IBQuery_Faturas
+    Left = 152
+    Top = 136
+  end
+  object IBQuery_Vendas: TIBQuery
+    Database = Dm.IBDatabase
+    Transaction = Dm.IBTransaction
+    SQL.Strings = (
+      'select NUMERO_CONTRATO, NOME_CLIENTE from VENDAS')
+    Left = 64
+    Top = 136
+    object IBQuery_VendasNUMERO_CONTRATO: TIBStringField
+      FieldName = 'NUMERO_CONTRATO'
+      Origin = '"VENDAS"."NUMERO_CONTRATO"'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 10
+    end
+    object IBQuery_VendasNOME_CLIENTE: TIBStringField
+      FieldName = 'NOME_CLIENTE'
+      Origin = '"VENDAS"."NOME_CLIENTE"'
+      Size = 51
+    end
+  end
+  object DS_CliPendente: TDataSource
+    DataSet = IBQuery_CliPendente
+    Left = 256
+    Top = 136
+  end
+  object IBQuery_CliPendente: TIBQuery
+    Database = Dm.IBDatabase
+    Transaction = Dm.IBTransaction
+    SQL.Strings = (
+      
+        'select BAIRRO, CEP, CIDADE, CNPJ, EMAIL, ENDERECO, ESTADO_UF, IE' +
+        ', TELEFONE, NUMERO_CONTRATO, NOME_CLIENTE from EMPRESA,VENDAS')
+    Left = 224
+    Top = 136
+    object IBQuery_CliPendenteBAIRRO: TIBStringField
+      FieldName = 'BAIRRO'
+      Origin = '"EMPRESA"."BAIRRO"'
+      Size = 30
+    end
+    object IBQuery_CliPendenteCEP: TIBStringField
+      FieldName = 'CEP'
+      Origin = '"EMPRESA"."CEP"'
+      Size = 10
+    end
+    object IBQuery_CliPendenteCIDADE: TIBStringField
+      FieldName = 'CIDADE'
+      Origin = '"EMPRESA"."CIDADE"'
+      Size = 25
+    end
+    object IBQuery_CliPendenteCNPJ: TIBStringField
+      FieldName = 'CNPJ'
+      Origin = '"EMPRESA"."CNPJ"'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 18
+    end
+    object IBQuery_CliPendenteEMAIL: TIBStringField
+      FieldName = 'EMAIL'
+      Origin = '"EMPRESA"."EMAIL"'
+      Size = 50
+    end
+    object IBQuery_CliPendenteENDERECO: TIBStringField
+      FieldName = 'ENDERECO'
+      Origin = '"EMPRESA"."ENDERECO"'
+      Size = 50
+    end
+    object IBQuery_CliPendenteESTADO_UF: TIBStringField
+      FieldName = 'ESTADO_UF'
+      Origin = '"EMPRESA"."ESTADO_UF"'
+      Size = 25
+    end
+    object IBQuery_CliPendenteIE: TIBStringField
+      FieldName = 'IE'
+      Origin = '"EMPRESA"."IE"'
+      Size = 11
+    end
+    object IBQuery_CliPendenteTELEFONE: TIBStringField
+      FieldName = 'TELEFONE'
+      Origin = '"EMPRESA"."TELEFONE"'
+      Size = 30
+    end
+    object IBQuery_CliPendenteNUMERO_CONTRATO: TIBStringField
+      FieldName = 'NUMERO_CONTRATO'
+      Origin = '"VENDAS"."NUMERO_CONTRATO"'
+      ProviderFlags = [pfInUpdate, pfInWhere, pfInKey]
+      Required = True
+      Size = 10
+    end
+    object IBQuery_CliPendenteNOME_CLIENTE: TIBStringField
+      FieldName = 'NOME_CLIENTE'
+      Origin = '"VENDAS"."NOME_CLIENTE"'
+      Size = 51
+    end
+  end
+end
